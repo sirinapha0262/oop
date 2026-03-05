@@ -1,0 +1,1238 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OOP Exam Study Sheet</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;600;700;800;900&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+
+:root {
+  --ink: #1a1a2e;
+  --paper: #f4f1eb;
+  --cream: #fffdf7;
+  --line: #e8e3d8;
+  --red: #e63946;
+  --blue: #1d6fa4;
+  --green: #2d9e6b;
+  --orange: #e07b39;
+  --purple: #7b5ea7;
+  --teal: #1a8a8a;
+  --yellow: #f5c842;
+  --dark: #0f0f1a;
+}
+
+body {
+  background: #e8e3d8;
+  font-family: 'Noto Sans Thai', sans-serif;
+  padding: 30px 20px;
+  min-height: 100vh;
+}
+
+.notebook {
+  max-width: 1080px;
+  margin: 0 auto;
+  background: var(--cream);
+  border-radius: 4px;
+  box-shadow:
+    0 0 0 1px #ccc8bc,
+    6px 6px 0 #d4cfc3,
+    12px 12px 0 #cac5b9,
+    0 20px 60px rgba(0,0,0,0.15);
+  overflow: hidden;
+  position: relative;
+}
+
+/* Spiral binding */
+.spiral {
+  position: absolute;
+  top: 0; left: -2px;
+  width: 28px;
+  height: 100%;
+  background: #2a2a3a;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+}
+.ring {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  border: 4px solid #444;
+  background: #1a1a2e;
+  flex-shrink: 0;
+  margin: 6px 0;
+  position: relative;
+}
+.ring::after {
+  content:'';
+  position:absolute;
+  top:3px; left:3px;
+  width:10px; height:10px;
+  border-radius:50%;
+  background:rgba(255,255,255,0.15);
+}
+
+.content {
+  margin-left: 30px;
+  padding: 0;
+}
+
+/* Cover / Header */
+.cover {
+  background: var(--dark);
+  padding: 40px 40px 36px;
+  position: relative;
+  overflow: hidden;
+}
+
+.cover::before {
+  content:'';
+  position:absolute;
+  top:-60px; right:-60px;
+  width:300px; height:300px;
+  border-radius:50%;
+  background: radial-gradient(circle, rgba(123,94,167,0.4) 0%, transparent 70%);
+}
+
+.cover::after {
+  content:'';
+  position:absolute;
+  bottom:-40px; left:100px;
+  width:200px; height:200px;
+  border-radius:50%;
+  background: radial-gradient(circle, rgba(29,111,164,0.35) 0%, transparent 70%);
+}
+
+.cover-tag {
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  background:rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius:30px;
+  padding:6px 16px;
+  font-size:12px;
+  color:rgba(255,255,255,0.7);
+  letter-spacing:2px;
+  text-transform:uppercase;
+  margin-bottom:20px;
+}
+
+.cover h1 {
+  font-size: clamp(24px,4vw,42px);
+  font-weight: 900;
+  color: #fff;
+  line-height: 1.2;
+  margin-bottom: 10px;
+  position:relative;
+  z-index:1;
+}
+
+.cover h1 span { color: var(--yellow); }
+
+.cover-sub {
+  font-size:15px;
+  color:rgba(255,255,255,0.55);
+  position:relative;
+  z-index:1;
+  margin-bottom:24px;
+}
+
+.topic-pills {
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  position:relative;
+  z-index:1;
+}
+
+.pill {
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  padding:7px 14px;
+  border-radius:20px;
+  font-size:12.5px;
+  font-weight:700;
+  border: 1.5px solid;
+}
+
+/* Sections */
+.section {
+  padding: 32px 36px;
+  border-bottom: 2px solid var(--line);
+  position: relative;
+}
+
+.section:last-child { border-bottom: none; }
+
+/* Ruled lines bg */
+.section.ruled {
+  background-image: repeating-linear-gradient(
+    transparent,
+    transparent 27px,
+    #e8e3d8 27px,
+    #e8e3d8 28px
+  );
+  background-position: 0 40px;
+}
+
+.section-label {
+  display:inline-flex;
+  align-items:center;
+  gap:10px;
+  margin-bottom:22px;
+}
+
+.section-num {
+  width:36px; height:36px;
+  border-radius:10px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:16px; font-weight:900;
+  flex-shrink:0;
+}
+
+.section-title {
+  font-size:20px;
+  font-weight:800;
+  line-height:1.2;
+}
+
+.section-en {
+  font-size:13px;
+  font-weight:400;
+  opacity:0.6;
+  margin-top:2px;
+}
+
+/* === SECTION 1: Inheritance vs Encapsulation === */
+.vs-layout {
+  display:grid;
+  grid-template-columns: 1fr 48px 1fr;
+  gap:16px;
+  align-items:start;
+}
+
+.concept-card {
+  background:#fff;
+  border-radius:16px;
+  overflow:hidden;
+  box-shadow:0 2px 12px rgba(0,0,0,0.06);
+}
+
+.concept-head {
+  padding:14px 18px;
+  font-size:15px;
+  font-weight:800;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  color:#fff;
+}
+
+.concept-body {
+  padding:16px 18px;
+}
+
+.point {
+  display:flex;
+  gap:10px;
+  padding:6px 0;
+  font-size:13.5px;
+  color:#444;
+  border-bottom:1px solid #f0ece4;
+  line-height:1.5;
+}
+
+.point:last-child { border-bottom:none; }
+
+.point-dot {
+  width:20px; height:20px;
+  border-radius:6px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:10px;
+  flex-shrink:0;
+  margin-top:2px;
+}
+
+.vs-center {
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding-top:60px;
+}
+
+.vs-circle {
+  width:48px; height:48px;
+  border-radius:50%;
+  background:linear-gradient(135deg, var(--blue), var(--purple));
+  display:flex; align-items:center; justify-content:center;
+  color:#fff;
+  font-weight:900;
+  font-size:14px;
+  box-shadow:0 4px 16px rgba(123,94,167,0.4);
+}
+
+/* Code block */
+.codeblock {
+  background:#1a1a2e;
+  border-radius:12px;
+  overflow:hidden;
+  margin-top:14px;
+  font-family:'Fira Code', monospace;
+  font-size:12.5px;
+  box-shadow:0 4px 20px rgba(0,0,0,0.15);
+}
+
+.code-bar {
+  background:#252540;
+  padding:8px 16px;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  border-bottom:1px solid rgba(255,255,255,0.06);
+}
+
+.dot-r { width:10px;height:10px;border-radius:50%;background:#ff5f57; }
+.dot-y { width:10px;height:10px;border-radius:50%;background:#ffbd2e; }
+.dot-g { width:10px;height:10px;border-radius:50%;background:#28c840; }
+.code-title { font-size:11px; color:rgba(255,255,255,0.4); margin-left:4px; font-family:'Noto Sans Thai',sans-serif; }
+
+.code-body {
+  padding:16px 20px;
+  line-height:1.9;
+  color:#94a3b8;
+}
+
+.kw { color:#c792ea; }
+.cn { color:#82aaff; }
+.fn { color:#82b1ff; }
+.st { color:#c3e88d; }
+.cm { color:#546e7a; }
+.nu { color:#f78c6c; }
+.an { color:#ffcb6b; }
+
+/* === SECTION 2: Polymorphism === */
+.poly-visual {
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:0;
+  margin-bottom:20px;
+}
+
+.poly-base {
+  background:#fff;
+  border:2.5px solid var(--green);
+  border-radius:14px;
+  padding:12px 32px;
+  font-weight:800;
+  font-size:15px;
+  color:var(--green);
+  position:relative;
+  z-index:1;
+}
+
+.poly-lines {
+  display:flex;
+  width:100%;
+  justify-content:center;
+  gap:0;
+  position:relative;
+  height:36px;
+}
+
+.poly-lines::before {
+  content:'';
+  position:absolute;
+  top:0;
+  left:50%;
+  transform:translateX(-50%);
+  width:66%;
+  height:2px;
+  background:rgba(45,158,107,0.3);
+  top:18px;
+}
+
+.poly-line {
+  flex:1;
+  display:flex;
+  justify-content:center;
+  position:relative;
+}
+
+.poly-line::after {
+  content:'';
+  position:absolute;
+  top:0; bottom:0;
+  width:2px;
+  background:rgba(45,158,107,0.3);
+}
+
+.poly-children-row {
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:12px;
+  width:100%;
+}
+
+.poly-child-card {
+  background:#fff;
+  border-radius:12px;
+  overflow:hidden;
+  box-shadow:0 2px 8px rgba(0,0,0,0.06);
+  text-align:center;
+}
+
+.poly-child-head {
+  padding:10px;
+  font-size:13px;
+  font-weight:800;
+  color:#fff;
+}
+
+.poly-child-body {
+  padding:10px 12px;
+}
+
+.poly-method {
+  font-family:'Fira Code',monospace;
+  font-size:12px;
+  background:#f4f1eb;
+  padding:5px 10px;
+  border-radius:6px;
+  color:#555;
+  margin-bottom:6px;
+  display:block;
+}
+
+.poly-result {
+  font-size:14px;
+  font-weight:700;
+  padding:4px 10px;
+  border-radius:20px;
+  display:inline-block;
+}
+
+.type-badge {
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:8px 16px;
+  border-radius:10px;
+  font-size:13px;
+  font-weight:700;
+  margin:6px;
+}
+
+/* === SECTION 3: Getter Setter === */
+.gs-visual {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:16px;
+}
+
+.gs-card {
+  background:#fff;
+  border-radius:16px;
+  overflow:hidden;
+  box-shadow:0 2px 10px rgba(0,0,0,0.06);
+}
+
+.gs-head {
+  padding:14px 18px;
+  display:flex;
+  align-items:center;
+  gap:12px;
+  color:#fff;
+}
+
+.gs-head-icon {
+  width:36px; height:36px;
+  border-radius:10px;
+  background:rgba(255,255,255,0.2);
+  display:flex;align-items:center;justify-content:center;
+  font-size:18px;
+}
+
+.gs-head-text { font-weight:800; font-size:15px; }
+.gs-head-sub { font-size:11px; opacity:0.8; }
+
+.gs-body { padding:16px 18px; }
+
+.flow-step {
+  display:flex;
+  align-items:flex-start;
+  gap:10px;
+  padding:8px 0;
+  border-bottom:1px solid #f0ece4;
+}
+
+.flow-step:last-child { border:none; }
+
+.flow-icon {
+  width:28px; height:28px;
+  border-radius:8px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:14px;
+  flex-shrink:0;
+}
+
+.flow-text { font-size:13px; color:#444; line-height:1.5; }
+.flow-text strong { color:#1a1a2e; display:block; font-size:12.5px; margin-bottom:2px; }
+
+/* === SECTION 4: API Client-Server === */
+.api-arch {
+  display:flex;
+  align-items:stretch;
+  gap:0;
+  background:#fff;
+  border-radius:16px;
+  overflow:hidden;
+  box-shadow:0 2px 12px rgba(0,0,0,0.07);
+  margin-bottom:16px;
+}
+
+.api-side {
+  flex:1;
+  padding:24px 20px;
+  text-align:center;
+}
+
+.api-icon { font-size:44px; margin-bottom:10px; }
+.api-name { font-weight:800; font-size:16px; margin-bottom:6px; }
+.api-desc { font-size:12.5px; color:#666; line-height:1.5; }
+
+.api-middle {
+  width:160px;
+  flex-shrink:0;
+  background:#f4f1eb;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  padding:16px 8px;
+  border-left:2px dashed #d4cfc3;
+  border-right:2px dashed #d4cfc3;
+}
+
+.http-tag {
+  padding:6px 12px;
+  border-radius:20px;
+  font-size:11.5px;
+  font-weight:700;
+  font-family:'Fira Code',monospace;
+  display:flex;
+  align-items:center;
+  gap:6px;
+  white-space:nowrap;
+}
+
+.http-steps {
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:12px;
+  margin-top:4px;
+}
+
+.http-step {
+  background:#fff;
+  border-radius:12px;
+  padding:14px 12px;
+  text-align:center;
+  box-shadow:0 2px 8px rgba(0,0,0,0.05);
+  border-top:3px solid;
+}
+
+.step-num {
+  width:26px; height:26px;
+  border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:12px; font-weight:800;
+  margin:0 auto 8px;
+  color:#fff;
+}
+
+.step-title { font-size:12.5px; font-weight:700; margin-bottom:4px; }
+.step-desc { font-size:11.5px; color:#666; line-height:1.4; }
+
+.method-grid {
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:10px;
+  margin-top:16px;
+}
+
+.method-card {
+  background:#fff;
+  border-radius:12px;
+  padding:12px;
+  text-align:center;
+  box-shadow:0 2px 8px rgba(0,0,0,0.05);
+}
+
+.method-name {
+  font-family:'Fira Code',monospace;
+  font-size:15px;
+  font-weight:700;
+  margin-bottom:4px;
+  display:block;
+  padding:4px 8px;
+  border-radius:6px;
+}
+
+.method-desc { font-size:12px; color:#555; }
+
+/* === SECTION 5: OOP for API === */
+.arch-diagram {
+  display:flex;
+  flex-direction:column;
+  gap:0;
+  align-items:center;
+  margin-bottom:20px;
+}
+
+.arch-layer {
+  width:100%;
+  max-width:600px;
+  background:#fff;
+  border-radius:14px;
+  padding:16px 20px;
+  display:flex;
+  align-items:center;
+  gap:16px;
+  box-shadow:0 2px 8px rgba(0,0,0,0.06);
+  position:relative;
+  z-index:1;
+}
+
+.arch-arrow {
+  color:#aaa;
+  font-size:20px;
+  margin:4px 0;
+  z-index:0;
+  text-align:center;
+}
+
+.arch-icon {
+  width:42px; height:42px;
+  border-radius:12px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:20px;
+  flex-shrink:0;
+}
+
+.arch-content { flex:1; }
+.arch-name { font-weight:800; font-size:14px; margin-bottom:3px; }
+.arch-desc { font-size:12.5px; color:#666; line-height:1.4; }
+.arch-snippet {
+  font-family:'Fira Code',monospace;
+  font-size:11px;
+  background:#f4f1eb;
+  padding:3px 8px;
+  border-radius:6px;
+  color:#444;
+  display:inline-block;
+  margin-top:5px;
+}
+
+.full-example {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:16px;
+  margin-top:20px;
+}
+
+.benefit-box {
+  background:#fff;
+  border-radius:14px;
+  padding:18px;
+  box-shadow:0 2px 8px rgba(0,0,0,0.05);
+}
+
+.benefit-title {
+  font-size:14px;
+  font-weight:800;
+  margin-bottom:12px;
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+
+.benefit-item {
+  display:flex;
+  align-items:flex-start;
+  gap:10px;
+  padding:7px 0;
+  border-bottom:1px solid #f0ece4;
+  font-size:13px;
+  color:#444;
+  line-height:1.5;
+}
+
+.benefit-item:last-child { border:none; }
+
+.b-icon {
+  width:22px; height:22px;
+  border-radius:6px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:11px;
+  flex-shrink:0;
+}
+
+/* Footer */
+.footer {
+  background:var(--dark);
+  padding:24px 36px 24px 36px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  flex-wrap:wrap;
+  gap:12px;
+}
+
+.footer-tips { display:flex; flex-wrap:wrap; gap:8px; }
+
+.tip-chip {
+  background:rgba(255,255,255,0.07);
+  border:1px solid rgba(255,255,255,0.12);
+  border-radius:20px;
+  padding:5px 14px;
+  font-size:12px;
+  color:rgba(255,255,255,0.75);
+}
+
+.footer-luck {
+  color:var(--yellow);
+  font-weight:700;
+  font-size:14px;
+}
+
+/* Animation */
+@keyframes fadeUp {
+  from { opacity:0; transform:translateY(16px); }
+  to { opacity:1; transform:translateY(0); }
+}
+
+.section { animation: fadeUp 0.5s ease both; }
+.section:nth-child(1) { animation-delay:0.05s; }
+.section:nth-child(2) { animation-delay:0.1s; }
+.section:nth-child(3) { animation-delay:0.15s; }
+.section:nth-child(4) { animation-delay:0.2s; }
+.section:nth-child(5) { animation-delay:0.25s; }
+.section:nth-child(6) { animation-delay:0.3s; }
+</style>
+</head>
+<body>
+<div class="notebook">
+  <div class="spiral">
+    <div class="ring"></div><div class="ring"></div><div class="ring"></div>
+    <div class="ring"></div><div class="ring"></div><div class="ring"></div>
+    <div class="ring"></div><div class="ring"></div><div class="ring"></div>
+    <div class="ring"></div><div class="ring"></div><div class="ring"></div>
+    <div class="ring"></div><div class="ring"></div><div class="ring"></div>
+    <div class="ring"></div><div class="ring"></div><div class="ring"></div>
+    <div class="ring"></div><div class="ring"></div><div class="ring"></div>
+    <div class="ring"></div><div class="ring"></div><div class="ring"></div>
+    <div class="ring"></div>
+  </div>
+
+  <div class="content">
+
+    <!-- COVER -->
+    <div class="cover">
+      <div class="cover-tag">📚 แนวข้อสอบ OOP 2/68 (19)</div>
+      <h1>Object-Oriented<br><span>Programming & API</span></h1>
+      <p class="cover-sub">ให้ทำข้อสอบในลักษณะกราฟิกส์ — ชัดเจน บรรยายเพิ่ม พร้อม Code ตัวอย่าง</p>
+      <div class="topic-pills">
+        <span class="pill" style="color:#82aaff;border-color:rgba(130,170,255,0.4);background:rgba(130,170,255,0.1)">① Inheritance vs Encapsulation</span>
+        <span class="pill" style="color:#c3e88d;border-color:rgba(195,232,141,0.4);background:rgba(195,232,141,0.1)">② Polymorphism</span>
+        <span class="pill" style="color:#ffcb6b;border-color:rgba(255,203,107,0.4);background:rgba(255,203,107,0.1)">③ Getter & Setter</span>
+        <span class="pill" style="color:#89ddff;border-color:rgba(137,221,255,0.4);background:rgba(137,221,255,0.1)">④ API Client–Server</span>
+        <span class="pill" style="color:#f78c6c;border-color:rgba(247,140,108,0.4);background:rgba(247,140,108,0.1)">⑤ OOP สำหรับ API</span>
+      </div>
+    </div>
+
+    <!-- SECTION 1: Inheritance vs Encapsulation -->
+    <div class="section" style="background:#fffdf7">
+      <div class="section-label">
+        <div class="section-num" style="background:rgba(29,111,164,0.12);color:var(--blue)">①</div>
+        <div>
+          <div class="section-title" style="color:var(--blue)">ความแตกต่างหลัก: Inheritance vs Encapsulation</div>
+          <div class="section-en">การสืบทอดคุณสมบัติ vs การห่อหุ้มข้อมูล</div>
+        </div>
+      </div>
+
+      <div class="vs-layout">
+        <!-- Inheritance -->
+        <div class="concept-card">
+          <div class="concept-head" style="background:linear-gradient(135deg,#1d6fa4,#2563eb)">
+            <span style="font-size:22px">🔗</span>
+            <div>
+              <div>Inheritance</div>
+              <div style="font-size:11px;opacity:0.8;font-weight:400">การสืบทอดคุณสมบัติ</div>
+            </div>
+          </div>
+          <div class="concept-body">
+            <div class="point">
+              <div class="point-dot" style="background:rgba(29,111,164,0.12);color:var(--blue)">▸</div>
+              <div>Class ลูก (Child) รับ <strong style="color:var(--blue)">attribute และ method</strong> ทั้งหมดจาก Class แม่ (Parent) มาใช้ได้ทันที</div>
+            </div>
+            <div class="point">
+              <div class="point-dot" style="background:rgba(29,111,164,0.12);color:var(--blue)">▸</div>
+              <div>ใช้ keyword <code style="background:#f0f4ff;padding:2px 6px;border-radius:4px;color:var(--blue);font-family:'Fira Code',monospace;font-size:12px">extends</code> ในการสืบทอด</div>
+            </div>
+            <div class="point">
+              <div class="point-dot" style="background:rgba(29,111,164,0.12);color:var(--blue)">▸</div>
+              <div>ลดการเขียน code ซ้ำ (Code Reuse) — เขียนครั้งเดียวใช้ได้หลาย class</div>
+            </div>
+            <div class="point">
+              <div class="point-dot" style="background:rgba(29,111,164,0.12);color:var(--blue)">▸</div>
+              <div>สร้างความสัมพันธ์แบบ <strong>"is-a"</strong> เช่น Dog <em>is-a</em> Animal</div>
+            </div>
+            <div class="point">
+              <div class="point-dot" style="background:rgba(29,111,164,0.12);color:var(--blue)">▸</div>
+              <div>จุดเน้น: <strong>โครงสร้าง</strong> ของ class / ลำดับชั้น (Hierarchy)</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="vs-center"><div class="vs-circle">VS</div></div>
+
+        <!-- Encapsulation -->
+        <div class="concept-card">
+          <div class="concept-head" style="background:linear-gradient(135deg,#7b5ea7,#9333ea)">
+            <span style="font-size:22px">🔒</span>
+            <div>
+              <div>Encapsulation</div>
+              <div style="font-size:11px;opacity:0.8;font-weight:400">การห่อหุ้มข้อมูล</div>
+            </div>
+          </div>
+          <div class="concept-body">
+            <div class="point">
+              <div class="point-dot" style="background:rgba(123,94,167,0.12);color:var(--purple)">▸</div>
+              <div>ซ่อน (hide) ข้อมูลภายใน class ด้วย <code style="background:#fdf4ff;padding:2px 6px;border-radius:4px;color:var(--purple);font-family:'Fira Code',monospace;font-size:12px">private</code></div>
+            </div>
+            <div class="point">
+              <div class="point-dot" style="background:rgba(123,94,167,0.12);color:var(--purple)">▸</div>
+              <div>ภายนอกเข้าถึงได้ผ่าน <strong>Getter / Setter</strong> เท่านั้น ไม่แตะโดยตรง</div>
+            </div>
+            <div class="point">
+              <div class="point-dot" style="background:rgba(123,94,167,0.12);color:var(--purple)">▸</div>
+              <div>ป้องกัน data ถูกแก้ไขผิดพลาดจากภายนอก class</div>
+            </div>
+            <div class="point">
+              <div class="point-dot" style="background:rgba(123,94,167,0.12);color:var(--purple)">▸</div>
+              <div>ใส่ <strong>validation logic</strong> ใน Setter ได้ เช่น ห้ามอายุติดลบ</div>
+            </div>
+            <div class="point">
+              <div class="point-dot" style="background:rgba(123,94,167,0.12);color:var(--purple)">▸</div>
+              <div>จุดเน้น: <strong>ความปลอดภัย</strong> ของข้อมูล / การควบคุมการเข้าถึง</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Code Example -->
+      <div class="codeblock" style="margin-top:18px">
+        <div class="code-bar">
+          <div class="dot-r"></div><div class="dot-y"></div><div class="dot-g"></div>
+          <span class="code-title">ตัวอย่าง: Inheritance + Encapsulation ในไฟล์เดียวกัน</span>
+        </div>
+        <div class="code-body">
+<span class="kw">class</span> <span class="cn">Animal</span> {  <span class="cm">// Parent Class</span><br>
+&nbsp;&nbsp;<span class="kw">protected</span> String name;  <span class="cm">// protected = ลูก access ได้</span><br>
+&nbsp;&nbsp;<span class="kw">public void</span> <span class="fn">speak</span>() { System.out.println(<span class="st">"..."</span>); }<br>
+}<br>
+<br>
+<span class="kw">class</span> <span class="cn">Dog</span> <span class="kw">extends</span> <span class="cn">Animal</span> {  <span class="cm">// ← Inheritance: Dog สืบทอดจาก Animal</span><br>
+&nbsp;&nbsp;<span class="kw">private</span> String breed;  <span class="cm">// ← Encapsulation: ซ่อน breed ไว้ใน class</span><br>
+<br>
+&nbsp;&nbsp;<span class="kw">public</span> String <span class="fn">getBreed</span>() { <span class="kw">return</span> breed; }  <span class="cm">// Getter</span><br>
+&nbsp;&nbsp;<span class="kw">public void</span> <span class="fn">setBreed</span>(String b) { <span class="kw">this</span>.breed = b; }  <span class="cm">// Setter</span><br>
+<br>
+&nbsp;&nbsp;<span class="an">@Override</span><br>
+&nbsp;&nbsp;<span class="kw">public void</span> <span class="fn">speak</span>() { System.out.println(<span class="st">"Woof!"</span>); }  <span class="cm">// Override method</span><br>
+}
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 2: Polymorphism -->
+    <div class="section" style="background:#f8fdf9">
+      <div class="section-label">
+        <div class="section-num" style="background:rgba(45,158,107,0.12);color:var(--green)">②</div>
+        <div>
+          <div class="section-title" style="color:var(--green)">หลักการทำงานของการพ้องรูป (Polymorphism)</div>
+          <div class="section-en">Method เดียวกัน — หลาย Class — ผลลัพธ์ต่างกัน</div>
+        </div>
+      </div>
+
+      <div class="poly-visual">
+        <div class="poly-base">🐾 Animal — <span style="font-family:'Fira Code',monospace;font-size:13px">speak()</span></div>
+        <div style="display:flex;width:66%;max-width:400px;justify-content:space-around;height:30px;position:relative">
+          <div style="position:absolute;top:0;left:0;right:0;height:1px;background:rgba(45,158,107,0.3);top:50%"></div>
+          <div style="width:2px;height:100%;background:rgba(45,158,107,0.3);margin-left:16%"></div>
+          <div style="width:2px;height:100%;background:rgba(45,158,107,0.3)"></div>
+          <div style="width:2px;height:100%;background:rgba(45,158,107,0.3);margin-right:16%"></div>
+        </div>
+        <div class="poly-children-row" style="max-width:600px;margin:0 auto">
+          <div class="poly-child-card">
+            <div class="poly-child-head" style="background:linear-gradient(135deg,#2d9e6b,#059669)">🐕 Dog</div>
+            <div class="poly-child-body">
+              <span class="poly-method">speak()</span>
+              <div class="poly-result" style="background:#e8fdf2;color:#059669">"Woof! 🐕"</div>
+            </div>
+          </div>
+          <div class="poly-child-card">
+            <div class="poly-child-head" style="background:linear-gradient(135deg,#e07b39,#d97706)">🐱 Cat</div>
+            <div class="poly-child-body">
+              <span class="poly-method">speak()</span>
+              <div class="poly-result" style="background:#fff7ed;color:#d97706">"Meow! 🐱"</div>
+            </div>
+          </div>
+          <div class="poly-child-card">
+            <div class="poly-child-head" style="background:linear-gradient(135deg,#1d6fa4,#2563eb)">🐄 Cow</div>
+            <div class="poly-child-body">
+              <span class="poly-method">speak()</span>
+              <div class="poly-result" style="background:#eff6ff;color:#2563eb">"Moo! 🐄"</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px;justify-content:center">
+        <div class="type-badge" style="background:rgba(45,158,107,0.1);color:var(--green);border:1.5px solid rgba(45,158,107,0.3)">
+          ✅ Method Overriding = Runtime Polymorphism — ทำงานตอน Run
+        </div>
+        <div class="type-badge" style="background:rgba(29,111,164,0.1);color:var(--blue);border:1.5px solid rgba(29,111,164,0.3)">
+          ✅ Method Overloading = Compile-time Polymorphism — ทำงานตอน Compile
+        </div>
+      </div>
+
+      <div class="codeblock">
+        <div class="code-bar">
+          <div class="dot-r"></div><div class="dot-y"></div><div class="dot-g"></div>
+          <span class="code-title">ตัวอย่าง: ใช้ Polymorphism เรียก method ผ่าน array</span>
+        </div>
+        <div class="code-body">
+<span class="cn">Animal</span>[] animals = { <span class="kw">new</span> <span class="cn">Dog</span>(), <span class="kw">new</span> <span class="cn">Cat</span>(), <span class="kw">new</span> <span class="cn">Cow</span>() };<br>
+<br>
+<span class="kw">for</span> (<span class="cn">Animal</span> a : animals) {<br>
+&nbsp;&nbsp;a.<span class="fn">speak</span>();  <span class="cm">// เรียก method เดิมชื่อเดียวกัน</span><br>
+}<br>
+<span class="cm">// Output: "Woof!" → "Meow!" → "Moo!"</span><br>
+<span class="cm">// Java เลือก method ที่ถูกต้องให้อัตโนมัติ ณ Runtime!</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 3: Getter and Setter -->
+    <div class="section" style="background:#fffdf5">
+      <div class="section-label">
+        <div class="section-num" style="background:rgba(224,123,57,0.12);color:var(--orange)">③</div>
+        <div>
+          <div class="section-title" style="color:var(--orange)">บทบาทของ Getter และ Setter</div>
+          <div class="section-en">ประตูเข้า-ออกข้อมูลของ Encapsulation</div>
+        </div>
+      </div>
+
+      <div class="gs-visual">
+        <div class="gs-card">
+          <div class="gs-head" style="background:linear-gradient(135deg,#2d9e6b,#059669)">
+            <div class="gs-head-icon">📤</div>
+            <div>
+              <div class="gs-head-text">Getter</div>
+              <div class="gs-head-sub">getXxx() — อ่านค่า</div>
+            </div>
+          </div>
+          <div class="gs-body">
+            <div class="flow-step">
+              <div class="flow-icon" style="background:#e8fdf2">👁</div>
+              <div class="flow-text"><strong>อ่านค่า private variable</strong>คืนค่ากลับให้ผู้เรียก ไม่แก้ไขข้อมูลใดๆ</div>
+            </div>
+            <div class="flow-step">
+              <div class="flow-icon" style="background:#e8fdf2">🔒</div>
+              <div class="flow-text"><strong>ภายนอกเข้าถึงได้โดยไม่แตะ field โดยตรง</strong>ปลอดภัยกว่า public variable</div>
+            </div>
+            <div class="flow-step">
+              <div class="flow-icon" style="background:#e8fdf2">🔄</div>
+              <div class="flow-text"><strong>เปลี่ยน logic ภายในได้</strong>โดยไม่กระทบ code ที่เรียกใช้ภายนอก</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="gs-card">
+          <div class="gs-head" style="background:linear-gradient(135deg,#e63946,#dc2626)">
+            <div class="gs-head-icon">📥</div>
+            <div>
+              <div class="gs-head-text">Setter</div>
+              <div class="gs-head-sub">setXxx() — เขียนค่า</div>
+            </div>
+          </div>
+          <div class="gs-body">
+            <div class="flow-step">
+              <div class="flow-icon" style="background:#fff1f2">✏️</div>
+              <div class="flow-text"><strong>เปลี่ยนค่า private variable</strong>รับ parameter แล้ว assign ให้ field</div>
+            </div>
+            <div class="flow-step">
+              <div class="flow-icon" style="background:#fff1f2">✅</div>
+              <div class="flow-text"><strong>ใส่ Validation ได้</strong>เช่น ห้าม age &lt; 0 หรือ name ห้ามเป็น null</div>
+            </div>
+            <div class="flow-step">
+              <div class="flow-icon" style="background:#fff1f2">🛡</div>
+              <div class="flow-text"><strong>ป้องกัน data ผิดรูปแบบ</strong>ก่อนที่ข้อมูลจะเข้าสู่ระบบ</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="codeblock" style="margin-top:16px">
+        <div class="code-bar">
+          <div class="dot-r"></div><div class="dot-y"></div><div class="dot-g"></div>
+          <span class="code-title">ตัวอย่าง Getter & Setter พร้อม Validation</span>
+        </div>
+        <div class="code-body">
+<span class="kw">class</span> <span class="cn">Person</span> {<br>
+&nbsp;&nbsp;<span class="kw">private</span> String name;  <span class="cm">// private = ซ่อน, เข้าถึงตรงๆ ไม่ได้</span><br>
+&nbsp;&nbsp;<span class="kw">private int</span> age;<br>
+<br>
+&nbsp;&nbsp;<span class="cm">// === GETTER ===</span><br>
+&nbsp;&nbsp;<span class="kw">public</span> String <span class="fn">getName</span>() { <span class="kw">return</span> name; }<br>
+&nbsp;&nbsp;<span class="kw">public int</span> <span class="fn">getAge</span>()  { <span class="kw">return</span> age; }<br>
+<br>
+&nbsp;&nbsp;<span class="cm">// === SETTER + VALIDATION ===</span><br>
+&nbsp;&nbsp;<span class="kw">public void</span> <span class="fn">setName</span>(String name) {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">if</span> (name != <span class="kw">null</span> && !name.isEmpty()) <span class="kw">this</span>.name = name;<br>
+&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;<span class="kw">public void</span> <span class="fn">setAge</span>(<span class="kw">int</span> age) {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">if</span> (age > <span class="nu">0</span>) <span class="kw">this</span>.age = age;  <span class="cm">// ห้ามอายุติดลบ!</span><br>
+&nbsp;&nbsp;}<br>
+}<br>
+<br>
+<span class="cm">// การใช้งาน</span><br>
+<span class="cn">Person</span> p = <span class="kw">new</span> <span class="cn">Person</span>();<br>
+p.<span class="fn">setName</span>(<span class="st">"สมชาย"</span>);  <span class="cm">// ✅ ผ่าน Setter</span><br>
+p.<span class="fn">setAge</span>(-<span class="nu">5</span>);    <span class="cm">// ❌ ถูกบล็อก! อายุติดลบไม่ได้</span><br>
+System.out.println(p.<span class="fn">getName</span>());  <span class="cm">// ✅ ผ่าน Getter</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 4: API Client-Server -->
+    <div class="section" style="background:#f5fbff">
+      <div class="section-label">
+        <div class="section-num" style="background:rgba(26,138,138,0.12);color:var(--teal)">④</div>
+        <div>
+          <div class="section-title" style="color:var(--teal)">API ในรูปแบบ Client–Server</div>
+          <div class="section-en">การสื่อสารระหว่าง 2 ฝั่งผ่าน HTTP Request/Response</div>
+        </div>
+      </div>
+
+      <!-- Architecture diagram -->
+      <div class="api-arch">
+        <div class="api-side" style="border-right:1px solid #e8e3d8">
+          <div class="api-icon">💻</div>
+          <div class="api-name" style="color:var(--blue)">CLIENT</div>
+          <div class="api-desc">Browser, Mobile App<br>หรือ Program ที่ต้องการข้อมูล<br><br>หน้าที่: <strong>ส่ง Request</strong><br>และ แสดงผล Response</div>
+        </div>
+        <div class="api-middle">
+          <div class="http-tag" style="background:rgba(29,111,164,0.1);color:var(--blue);border:1.5px solid rgba(29,111,164,0.25)">→ REQUEST →</div>
+          <div style="font-size:11px;color:#999;text-align:center">HTTP / HTTPS<br>JSON / XML</div>
+          <div class="http-tag" style="background:rgba(45,158,107,0.1);color:var(--green);border:1.5px solid rgba(45,158,107,0.25)">← RESPONSE ←</div>
+        </div>
+        <div class="api-side" style="border-left:1px solid #e8e3d8">
+          <div class="api-icon">🖥</div>
+          <div class="api-name" style="color:var(--teal)">SERVER</div>
+          <div class="api-desc">Backend Program + Database<br>ที่ให้บริการข้อมูล<br><br>หน้าที่: <strong>รับ Request</strong>,<br>ค้นหา DB, ส่งผลกลับ</div>
+        </div>
+      </div>
+
+      <!-- 4 Steps -->
+      <div class="http-steps">
+        <div class="http-step" style="border-color:var(--blue)">
+          <div class="step-num" style="background:var(--blue)">1</div>
+          <div class="step-title">Client ส่ง Request</div>
+          <div class="step-desc">ระบุ URL endpoint, HTTP method, และ data (ถ้ามี)</div>
+        </div>
+        <div class="http-step" style="border-color:var(--orange)">
+          <div class="step-num" style="background:var(--orange)">2</div>
+          <div class="step-title">Server รับและประมวลผล</div>
+          <div class="step-desc">ตรวจสอบสิทธิ์, ค้นหา DB, เตรียมข้อมูล</div>
+        </div>
+        <div class="http-step" style="border-color:var(--green)">
+          <div class="step-num" style="background:var(--green)">3</div>
+          <div class="step-title">Server ส่ง Response</div>
+          <div class="step-desc">ส่งกลับในรูป JSON พร้อม HTTP Status Code</div>
+        </div>
+        <div class="http-step" style="border-color:var(--purple)">
+          <div class="step-num" style="background:var(--purple)">4</div>
+          <div class="step-title">Client แสดงผล</div>
+          <div class="step-desc">นำ JSON ไป parse และแสดงผลบน UI</div>
+        </div>
+      </div>
+
+      <!-- HTTP Methods -->
+      <div class="method-grid">
+        <div class="method-card">
+          <span class="method-name" style="background:#e8fdf2;color:#059669">GET</span>
+          <div class="method-desc">ดึงข้อมูล<br>ไม่แก้ไขอะไร</div>
+        </div>
+        <div class="method-card">
+          <span class="method-name" style="background:#eff6ff;color:#2563eb">POST</span>
+          <div class="method-desc">สร้างข้อมูลใหม่<br>ส่ง body ไปด้วย</div>
+        </div>
+        <div class="method-card">
+          <span class="method-name" style="background:#fff7ed;color:#d97706">PUT</span>
+          <div class="method-desc">แก้ไขข้อมูล<br>ส่งข้อมูลใหม่ทั้งหมด</div>
+        </div>
+        <div class="method-card">
+          <span class="method-name" style="background:#fff1f2;color:#e11d48">DELETE</span>
+          <div class="method-desc">ลบข้อมูล<br>ระบุ ID ที่ต้องการลบ</div>
+        </div>
+      </div>
+
+      <div class="codeblock" style="margin-top:16px">
+        <div class="code-bar">
+          <div class="dot-r"></div><div class="dot-y"></div><div class="dot-g"></div>
+          <span class="code-title">ตัวอย่าง: เรียก API ด้วย Java (GET request)</span>
+        </div>
+        <div class="code-body">
+<span class="cm">// Client ส่ง HTTP GET ไปยัง Server</span><br>
+URL url = <span class="kw">new</span> URL(<span class="st">"https://api.example.com/users/1"</span>);<br>
+HttpURLConnection conn = (HttpURLConnection) url.<span class="fn">openConnection</span>();<br>
+conn.<span class="fn">setRequestMethod</span>(<span class="st">"GET"</span>);<br>
+<br>
+<span class="cm">// อ่าน Response จาก Server</span><br>
+BufferedReader reader = <span class="kw">new</span> BufferedReader(<br>
+&nbsp;&nbsp;<span class="kw">new</span> InputStreamReader(conn.<span class="fn">getInputStream</span>())<br>
+);<br>
+String jsonResponse = reader.<span class="fn">readLine</span>();<br>
+<span class="cm">// jsonResponse = { "id": 1, "name": "สมชาย", "age": 25 }</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 5: OOP for API -->
+    <div class="section" style="background:#fff8f5">
+      <div class="section-label">
+        <div class="section-num" style="background:rgba(230,57,70,0.10);color:var(--red)">⑤</div>
+        <div>
+          <div class="section-title" style="color:var(--red)">แนวคิด OOP สำหรับการเรียกใช้งาน API</div>
+          <div class="section-en">ออกแบบโปรแกรมเชิงวัตถุให้รองรับ API อย่างมีโครงสร้าง</div>
+        </div>
+      </div>
+
+      <!-- Architecture layers -->
+      <div class="arch-diagram">
+        <div class="arch-layer" style="border-left:4px solid var(--red)">
+          <div class="arch-icon" style="background:rgba(230,57,70,0.1)">🎮</div>
+          <div class="arch-content">
+            <div class="arch-name" style="color:var(--red)">Controller / Main Class</div>
+            <div class="arch-desc">รับ input จาก User หรือ UI → เรียก Service → แสดงผล<br>แยก logic การทำงานออกจากส่วนแสดงผล</div>
+            <span class="arch-snippet">App.main() → userService.getUsers() → display()</span>
+          </div>
+        </div>
+        <div class="arch-arrow">↕</div>
+        <div class="arch-layer" style="border-left:4px solid var(--teal)">
+          <div class="arch-icon" style="background:rgba(26,138,138,0.1)">🌐</div>
+          <div class="arch-content">
+            <div class="arch-name" style="color:var(--teal)">Service Class (API Layer)</div>
+            <div class="arch-desc">จัดการ HTTP Request/Response, parse JSON กลับมาเป็น Object<br>แยก network logic ออกจาก business logic</div>
+            <span class="arch-snippet">UserService.fetchUsers() → HTTP GET → return User[]</span>
+          </div>
+        </div>
+        <div class="arch-arrow">↕</div>
+        <div class="arch-layer" style="border-left:4px solid var(--blue)">
+          <div class="arch-icon" style="background:rgba(29,111,164,0.1)">📦</div>
+          <div class="arch-content">
+            <div class="arch-name" style="color:var(--blue)">Model Class (Data)</div>
+            <div class="arch-desc">แทนโครงสร้างข้อมูลที่รับจาก API เช่น User, Product, Order<br>มี attribute + Getter/Setter ครบ</div>
+            <span class="arch-snippet">class User { private int id; private String name; ... }</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Full code + Benefits -->
+      <div class="full-example">
+        <div class="codeblock" style="margin-top:0">
+          <div class="code-bar">
+            <div class="dot-r"></div><div class="dot-y"></div><div class="dot-g"></div>
+            <span class="code-title">ตัวอย่าง OOP + API ครบทุก Layer</span>
+          </div>
+          <div class="code-body" style="font-size:11.5px">
+<span class="cm">// 📦 Model Layer</span><br>
+<span class="kw">class</span> <span class="cn">User</span> {<br>
+&nbsp;&nbsp;<span class="kw">private int</span> id;<br>
+&nbsp;&nbsp;<span class="kw">private</span> String name;<br>
+&nbsp;&nbsp;<span class="kw">public int</span> <span class="fn">getId</span>() { <span class="kw">return</span> id; }<br>
+&nbsp;&nbsp;<span class="kw">public</span> String <span class="fn">getName</span>() { <span class="kw">return</span> name; }<br>
+&nbsp;&nbsp;<span class="kw">public void</span> <span class="fn">setName</span>(String n){ name=n; }<br>
+}<br>
+<br>
+<span class="cm">// 🌐 Service Layer</span><br>
+<span class="kw">class</span> <span class="cn">UserService</span> {<br>
+&nbsp;&nbsp;<span class="kw">public</span> <span class="cn">User</span>[] <span class="fn">fetchUsers</span>() {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;String json = httpGet(<span class="st">"/api/users"</span>);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">return</span> parseJson(json, <span class="cn">User</span>[].<span class="kw">class</span>);<br>
+&nbsp;&nbsp;}<br>
+}<br>
+<br>
+<span class="cm">// 🎮 Controller Layer</span><br>
+<span class="kw">class</span> <span class="cn">App</span> {<br>
+&nbsp;&nbsp;<span class="kw">public static void</span> <span class="fn">main</span>(String[] args) {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="cn">UserService</span> svc = <span class="kw">new</span> <span class="cn">UserService</span>();<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="cn">User</span>[] users = svc.<span class="fn">fetchUsers</span>();<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">for</span>(<span class="cn">User</span> u : users)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;System.out.println(u.<span class="fn">getName</span>());<br>
+&nbsp;&nbsp;}<br>
+}
+          </div>
+        </div>
+
+        <div class="benefit-box">
+          <div class="benefit-title" style="color:var(--red)">🎯 ประโยชน์ของ OOP + API</div>
+          <div class="benefit-item">
+            <div class="b-icon" style="background:rgba(45,158,107,0.12);color:var(--green)">✦</div>
+            <div><strong>Separation of Concerns</strong> — แต่ละ layer ทำหน้าที่ของตัวเอง ไม่ยุ่งกัน</div>
+          </div>
+          <div class="benefit-item">
+            <div class="b-icon" style="background:rgba(29,111,164,0.12);color:var(--blue)">✦</div>
+            <div><strong>Reusability</strong> — UserService ใช้ซ้ำได้ทั้งระบบ ไม่ต้องเขียนใหม่</div>
+          </div>
+          <div class="benefit-item">
+            <div class="b-icon" style="background:rgba(224,123,57,0.12);color:var(--orange)">✦</div>
+            <div><strong>Testability</strong> — Test ได้ทีละ layer ง่าย ต่อการ debug</div>
+          </div>
+          <div class="benefit-item">
+            <div class="b-icon" style="background:rgba(123,94,167,0.12);color:var(--purple)">✦</div>
+            <div><strong>Maintainability</strong> — เพิ่ม feature ใหม่ โดยไม่กระทบ code เดิม</div>
+          </div>
+          <div class="benefit-item">
+            <div class="b-icon" style="background:rgba(26,138,138,0.12);color:var(--teal)">✦</div>
+            <div><strong>Encapsulation</strong> — ซ่อน network detail ไว้ใน Service ภายนอกไม่รู้</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+      <div class="footer-tips">
+        <span class="tip-chip">🔗 Inheritance = รับมรดก</span>
+        <span class="tip-chip">🔒 Encapsulation = ซ่อนข้อมูล</span>
+        <span class="tip-chip">🔀 Polymorphism = หลายรูปแบบ</span>
+        <span class="tip-chip">🔑 Getter/Setter = ประตูข้อมูล</span>
+        <span class="tip-chip">🌐 API = Client ↔ Server</span>
+      </div>
+      <div class="footer-luck">✨ โชคดีในการสอบ! OOP 2/68 (19)</div>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /notebook -->
+</body>
+</html>
