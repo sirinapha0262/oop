@@ -1220,262 +1220,287 @@ String jsonResponse = reader.<span class="fn">readLine</span>();<br>
       </div>
     </div>
 
-    <!-- SECTION 6: QUIZ GAME -->
-    <div class="section" style="background:linear-gradient(135deg,#0f0f1a 0%,#1a1a2e 100%);border-bottom:none;">
-      <div class="section-label">
-        <div class="section-num" style="background:rgba(245,200,66,0.15);color:var(--yellow)">🎮</div>
-        <div>
-          <div class="section-title" style="color:var(--yellow)">ทบทวนก่อนสอบ — Quiz Challenge</div>
-          <div class="section-en" style="color:rgba(255,255,255,0.45)">ตอบให้ได้ทุกข้อ = พร้อมสอบ 100%</div>
+    <!-- SECTION 6: GAME ZONE -->
+    <div class="section" style="background:linear-gradient(135deg,#0f0f1a 0%,#1a1a2e 100%);border-bottom:none;padding:28px 20px;">
+      <!-- Mode tabs -->
+      <div style="display:flex;gap:10px;margin-bottom:24px;flex-wrap:wrap;">
+        <button onclick="switchMode('quiz')" id="tab-quiz" class="mode-tab mode-active">🎮 Quiz 30 ข้อ</button>
+        <button onclick="switchMode('flash')" id="tab-flash" class="mode-tab">🃏 Flashcard</button>
+      </div>
+
+      <!-- ===== QUIZ MODE ===== -->
+      <div id="mode-quiz">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:8px;">
+          <div id="quiz-progress" style="font-size:13px;color:rgba(255,255,255,0.5);">ข้อ 1 / 30</div>
+          <div style="display:flex;align-items:center;gap:10px;">
+            <div style="font-size:12px;color:rgba(255,255,255,0.4);">คะแนน</div>
+            <div id="quiz-score" style="font-size:24px;font-weight:900;color:var(--yellow);">0</div>
+          </div>
+        </div>
+        <div style="background:rgba(255,255,255,0.08);border-radius:99px;height:6px;margin-bottom:20px;overflow:hidden;">
+          <div id="quiz-bar" style="background:linear-gradient(90deg,var(--yellow),var(--orange));height:100%;width:3.33%;border-radius:99px;transition:width 0.4s ease;"></div>
+        </div>
+        <div id="quiz-card" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:18px;padding:22px 20px 18px;">
+          <div id="quiz-topic" style="font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--yellow);margin-bottom:10px;"></div>
+          <div id="quiz-question" style="font-size:clamp(14px,3.5vw,18px);font-weight:700;color:#fff;line-height:1.55;margin-bottom:20px;"></div>
+          <div id="quiz-choices" style="display:flex;flex-direction:column;gap:9px;"></div>
+          <div id="quiz-explanation" style="display:none;margin-top:18px;background:rgba(255,255,255,0.05);border-radius:12px;padding:14px 16px;border-left:3px solid var(--yellow);">
+            <div style="font-size:11px;font-weight:800;color:var(--yellow);margin-bottom:5px;">💡 คำอธิบาย</div>
+            <div id="quiz-exp-text" style="font-size:13px;color:rgba(255,255,255,0.75);line-height:1.7;"></div>
+          </div>
+        </div>
+        <button id="quiz-next" onclick="nextQuestion()" style="display:none;margin-top:14px;width:100%;padding:13px;background:linear-gradient(90deg,var(--yellow),var(--orange));border:none;border-radius:12px;font-size:15px;font-weight:800;color:#1a1a2e;cursor:pointer;font-family:'Noto Sans Thai',sans-serif;">ถัดไป →</button>
+        <div id="quiz-result" style="display:none;text-align:center;padding:20px 0;">
+          <div style="font-size:56px;margin-bottom:10px;">🎉</div>
+          <div style="font-size:24px;font-weight:900;color:var(--yellow);margin-bottom:6px;">ผลการทำ Quiz</div>
+          <div id="result-score" style="font-size:44px;font-weight:900;color:#fff;margin-bottom:4px;"></div>
+          <div id="result-msg" style="font-size:15px;color:rgba(255,255,255,0.6);margin-bottom:20px;"></div>
+          <div id="wrong-list" style="text-align:left;margin-bottom:20px;"></div>
+          <button onclick="restartQuiz()" style="padding:13px 36px;background:linear-gradient(90deg,var(--yellow),var(--orange));border:none;border-radius:12px;font-size:15px;font-weight:800;color:#1a1a2e;cursor:pointer;font-family:'Noto Sans Thai',sans-serif;">🔄 ทำใหม่</button>
         </div>
       </div>
 
-      <div id="quiz-container">
-        <!-- Score bar -->
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
-          <div id="quiz-progress" style="font-size:13px;color:rgba(255,255,255,0.5);">ข้อ 1 / 15</div>
-          <div style="display:flex;align-items:center;gap:12px;">
-            <div style="font-size:13px;color:rgba(255,255,255,0.5);">คะแนน</div>
-            <div id="quiz-score" style="font-size:22px;font-weight:900;color:var(--yellow);">0</div>
+      <!-- ===== FLASHCARD MODE ===== -->
+      <div id="mode-flash" style="display:none;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:8px;">
+          <div id="flash-progress" style="font-size:13px;color:rgba(255,255,255,0.5);"></div>
+          <div style="display:flex;gap:8px;">
+            <button onclick="prevFlash()" style="padding:7px 14px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:8px;color:#fff;font-size:13px;cursor:pointer;font-family:'Noto Sans Thai',sans-serif;">← ก่อน</button>
+            <button onclick="nextFlash()" style="padding:7px 14px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:8px;color:#fff;font-size:13px;cursor:pointer;font-family:'Noto Sans Thai',sans-serif;">ถัดไป →</button>
           </div>
         </div>
-
-        <!-- Progress bar -->
-        <div style="background:rgba(255,255,255,0.08);border-radius:99px;height:6px;margin-bottom:24px;overflow:hidden;">
-          <div id="quiz-bar" style="background:linear-gradient(90deg,var(--yellow),var(--orange));height:100%;width:6.67%;border-radius:99px;transition:width 0.4s ease;"></div>
-        </div>
-
-        <!-- Question card -->
-        <div id="quiz-card" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:20px;padding:28px 28px 22px;">
-          <div id="quiz-topic" style="font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--yellow);margin-bottom:12px;"></div>
-          <div id="quiz-question" style="font-size:18px;font-weight:700;color:#fff;line-height:1.55;margin-bottom:24px;"></div>
-          <div id="quiz-choices" style="display:flex;flex-direction:column;gap:10px;"></div>
-          <div id="quiz-explanation" style="display:none;margin-top:20px;background:rgba(255,255,255,0.05);border-radius:12px;padding:16px 18px;border-left:3px solid var(--yellow);">
-            <div style="font-size:12px;font-weight:800;color:var(--yellow);margin-bottom:6px;">💡 คำอธิบาย</div>
-            <div id="quiz-exp-text" style="font-size:13.5px;color:rgba(255,255,255,0.75);line-height:1.7;"></div>
+        <div id="flash-card" onclick="flipCard()" style="cursor:pointer;perspective:1000px;min-height:220px;">
+          <div id="flash-inner" style="position:relative;width:100%;min-height:220px;transition:transform 0.5s;transform-style:preserve-3d;">
+            <div id="flash-front" style="position:absolute;width:100%;min-height:220px;backface-visibility:hidden;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:18px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px 20px;text-align:center;">
+              <div id="flash-topic-f" style="font-size:11px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--yellow);margin-bottom:14px;"></div>
+              <div id="flash-term" style="font-size:clamp(18px,5vw,28px);font-weight:900;color:#fff;line-height:1.4;"></div>
+              <div style="margin-top:16px;font-size:12px;color:rgba(255,255,255,0.3);">👆 แตะเพื่อดูคำตอบ</div>
+            </div>
+            <div id="flash-back" style="position:absolute;width:100%;min-height:220px;backface-visibility:hidden;background:rgba(45,158,107,0.12);border:1.5px solid rgba(45,158,107,0.4);border-radius:18px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px 20px;text-align:center;transform:rotateY(180deg);">
+              <div id="flash-topic-b" style="font-size:11px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--green);margin-bottom:14px;"></div>
+              <div id="flash-def" style="font-size:clamp(13px,3vw,15px);color:rgba(255,255,255,0.9);line-height:1.7;"></div>
+            </div>
           </div>
         </div>
-
-        <button id="quiz-next" onclick="nextQuestion()" style="display:none;margin-top:16px;width:100%;padding:14px;background:linear-gradient(90deg,var(--yellow),var(--orange));border:none;border-radius:12px;font-size:15px;font-weight:800;color:#1a1a2e;cursor:pointer;font-family:'Noto Sans Thai',sans-serif;">ถัดไป →</button>
-
-        <!-- Result screen -->
-        <div id="quiz-result" style="display:none;text-align:center;padding:20px 0;">
-          <div style="font-size:60px;margin-bottom:12px;">🎉</div>
-          <div style="font-size:28px;font-weight:900;color:var(--yellow);margin-bottom:8px;">ผลการทำ Quiz</div>
-          <div id="result-score" style="font-size:48px;font-weight:900;color:#fff;margin-bottom:4px;"></div>
-          <div id="result-msg" style="font-size:16px;color:rgba(255,255,255,0.6);margin-bottom:24px;"></div>
-          <button onclick="restartQuiz()" style="padding:14px 40px;background:linear-gradient(90deg,var(--yellow),var(--orange));border:none;border-radius:12px;font-size:15px;font-weight:800;color:#1a1a2e;cursor:pointer;font-family:'Noto Sans Thai',sans-serif;">🔄 ทำใหม่</button>
+        <div style="display:flex;gap:10px;margin-top:14px;">
+          <button onclick="markFlash(false)" style="flex:1;padding:11px;background:rgba(230,57,70,0.15);border:1.5px solid rgba(230,57,70,0.3);border-radius:10px;color:#ff6b6b;font-size:13px;font-weight:700;cursor:pointer;font-family:'Noto Sans Thai',sans-serif;">😓 ยังจำไม่ได้</button>
+          <button onclick="markFlash(true)" style="flex:1;padding:11px;background:rgba(45,158,107,0.15);border:1.5px solid rgba(45,158,107,0.3);border-radius:10px;color:#4ade80;font-size:13px;font-weight:700;cursor:pointer;font-family:'Noto Sans Thai',sans-serif;">✅ จำได้แล้ว</button>
         </div>
+        <div id="flash-known" style="margin-top:12px;font-size:12px;color:rgba(255,255,255,0.4);text-align:center;"></div>
       </div>
     </div>
 
 <style>
+/* ===== Responsive fixes ===== */
+@media(max-width:600px){
+  body { padding:10px 8px; }
+  .notebook { border-radius:3px; }
+  .section { padding:20px 14px; }
+  .cover { padding:24px 16px 20px; }
+  .cover h1 { font-size:22px; }
+  .vs-layout { grid-template-columns:1fr; }
+  .vs-center { padding:0; margin:8px 0; }
+  .poly-children-row { grid-template-columns:1fr; }
+  .gs-visual { grid-template-columns:1fr; }
+  .http-steps { grid-template-columns:1fr 1fr; }
+  .full-example { flex-direction:column; }
+  .method-grid { grid-template-columns:1fr 1fr; }
+  .spiral { width:18px; }
+  .ring { width:18px;height:18px; margin:4px 0; }
+  .content { margin-left:20px; }
+}
+@media(max-width:380px){
+  .http-steps { grid-template-columns:1fr; }
+  .method-grid { grid-template-columns:1fr; }
+  .section { padding:16px 12px; }
+}
+
+.mode-tab {
+  padding:9px 18px;
+  border-radius:10px;
+  border:1.5px solid rgba(255,255,255,0.15);
+  background:rgba(255,255,255,0.06);
+  color:rgba(255,255,255,0.6);
+  font-size:13px;
+  font-weight:700;
+  cursor:pointer;
+  font-family:'Noto Sans Thai',sans-serif;
+  transition:all 0.2s;
+}
+.mode-active {
+  background:linear-gradient(90deg,var(--yellow),var(--orange));
+  color:#1a1a2e;
+  border-color:transparent;
+}
 .choice-btn {
   background: rgba(255,255,255,0.06);
   border: 1.5px solid rgba(255,255,255,0.12);
-  border-radius: 12px;
-  padding: 13px 18px;
+  border-radius: 11px;
+  padding: 12px 16px;
   color: rgba(255,255,255,0.85);
-  font-size: 14px;
+  font-size: clamp(12px,3vw,14px);
   font-family: 'Noto Sans Thai', sans-serif;
   text-align: left;
   cursor: pointer;
   transition: all 0.2s;
   line-height: 1.5;
+  width:100%;
 }
 .choice-btn:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.25); }
-.choice-btn.correct { background: rgba(45,158,107,0.2); border-color: var(--green); color: #fff; }
+.choice-btn.correct { background: rgba(45,158,107,0.25); border-color: var(--green); color: #fff; }
 .choice-btn.wrong { background: rgba(230,57,70,0.2); border-color: var(--red); color: #fff; }
 .choice-btn:disabled { cursor: default; }
+.wrong-item {
+  background:rgba(230,57,70,0.1);
+  border:1px solid rgba(230,57,70,0.25);
+  border-radius:10px;
+  padding:10px 14px;
+  margin-bottom:8px;
+  font-size:12.5px;
+  color:rgba(255,255,255,0.7);
+  line-height:1.6;
+}
+.wrong-item strong { color:#ff8a8a; display:block; margin-bottom:3px; }
 </style>
 
 <script>
+// ===== 30 QUESTIONS =====
 const questions = [
-  {
-    topic: "🔗 Inheritance",
-    q: "Inheritance (การสืบทอด) คืออะไร?",
-    choices: [
-      "การซ่อนข้อมูลภายใน class ไม่ให้คนภายนอกเข้าถึงโดยตรง",
-      "Class ลูก (Child) รับ attribute และ method ของ class แม่ (Parent) มาใช้ได้",
-      "การที่ method เดียวกันทำงานต่างกันในแต่ละ class",
-      "การกำหนดค่าผ่าน Getter และ Setter"
-    ],
-    answer: 1,
-    exp: "Inheritance = รับมรดก — class ลูก extends class แม่ ได้รับ attribute + method ทั้งหมด ไม่ต้องเขียนใหม่ เช่น Dog extends Animal"
-  },
-  {
-    topic: "🔒 Encapsulation",
-    q: "Encapsulation (การห่อหุ้มข้อมูล) ต่างจาก Inheritance อย่างไร?",
-    choices: [
-      "Encapsulation = รับ method จาก class อื่น, Inheritance = ซ่อนข้อมูล",
-      "Encapsulation = ซ่อน/คุ้มครองข้อมูลใน class เดียว, Inheritance = แชร์ข้อมูลระหว่าง class",
-      "ทั้งสองอย่างเหมือนกันทุกประการ",
-      "Encapsulation ใช้กับ interface เท่านั้น"
-    ],
-    answer: 1,
-    exp: "Encapsulation = ซ่อนข้อมูลด้วย private + เปิดผ่าน Getter/Setter เท่านั้น ทำงานภายใน class เดียว | Inheritance = ถ่ายทอดคุณสมบัติระหว่าง class หลายชั้น"
-  },
-  {
-    topic: "🔒 Encapsulation",
-    q: "ทำไมถึงต้องประกาศ attribute เป็น private?",
-    choices: [
-      "เพื่อให้ class อื่น extends ได้",
-      "เพื่อป้องกันการแก้ไขข้อมูลโดยตรงจากภายนอก class",
-      "เพื่อให้ method ทำงานเร็วขึ้น",
-      "เพราะ Java บังคับให้ใช้ private เสมอ"
-    ],
-    answer: 1,
-    exp: "private ทำให้ข้อมูลเข้าถึงได้เฉพาะภายใน class นั้นเท่านั้น ป้องกัน bug จากการแก้ค่าผิดพลาด — ตรงนี้คือหัวใจของ Encapsulation"
-  },
-  {
-    topic: "🔀 Polymorphism",
-    q: "Polymorphism คืออะไรในเชิง OOP?",
-    choices: [
-      "Class ที่มี attribute มากกว่า 5 ตัว",
-      "method ชื่อเดียวกันใน class ต่างกันทำงานต่างกันได้",
-      "การสร้าง object ใหม่จาก class",
-      "การส่ง parameter ให้ constructor"
-    ],
-    answer: 1,
-    exp: "Polymorphism = หลายรูปแบบ — method sound() ใน Dog คือ 'โฮ่ง', ใน Cat คือ 'เมี้ยว' แม้ชื่อ method เหมือนกัน แต่ผลลัพธ์ต่างกัน"
-  },
-  {
-    topic: "🔀 Polymorphism",
-    q: "Method Overriding ใน Polymorphism คืออะไร?",
-    choices: [
-      "สร้าง method ชื่อเดียวกันใน class ลูก เพื่อเขียนทับ method ของ class แม่",
-      "เพิ่ม parameter ให้ method มากขึ้น",
-      "ลบ method ออกจาก class แม่",
-      "เรียก method จาก class อื่น"
-    ],
-    answer: 0,
-    exp: "Override = class ลูก เขียน method ชื่อเดียวกับ class แม่ใหม่ทั้งหมด พร้อม @Override annotation เมื่อเรียกใช้จะได้ version ของ class ลูก"
-  },
-  {
-    topic: "🔑 Getter & Setter",
-    q: "Getter มีหน้าที่อะไร?",
-    choices: [
-      "ตั้งค่า (write) ให้กับ private attribute",
-      "ดึงค่า (read) ออกมาจาก private attribute",
-      "ลบ attribute ออกจาก object",
-      "สร้าง object ใหม่"
-    ],
-    answer: 1,
-    exp: "Getter = 'ประตูออก' — ดึงค่า private ออกมาให้ภายนอกอ่านได้ เช่น getName() return ค่า private name ออกมา"
-  },
-  {
-    topic: "🔑 Getter & Setter",
-    q: "ทำไม Setter ถึงสำคัญกว่าการ set ค่าตรงๆ?",
-    choices: [
-      "Setter ทำงานเร็วกว่า",
-      "Setter ตั้งค่าได้ทุกอย่างโดยไม่มีเงื่อนไข",
-      "Setter ใส่ logic ตรวจสอบค่าก่อน set ได้ เช่น ห้ามอายุติดลบ",
-      "Setter บังคับให้ใช้กับ public attribute เท่านั้น"
-    ],
-    answer: 2,
-    exp: "Setter = 'ประตูเข้า' + ยาม — สามารถใส่ validation เช่น if(age > 0) this.age = age; ป้องกันข้อมูลผิดปกติเข้าสู่ระบบ"
-  },
-  {
-    topic: "🔑 Getter & Setter",
-    q: "ข้อใดคือตัวอย่าง Getter ที่ถูกต้อง?",
-    choices: [
-      "public void setName(String n) { this.name = n; }",
-      "public String getName() { return name; }",
-      "private String name = getName();",
-      "public getName() { name = 'test'; }"
-    ],
-    answer: 1,
-    exp: "Getter ต้อง: public + return type ที่ตรงกับ attribute + ชื่อขึ้นต้น get + คืนค่าด้วย return | Setter ต้อง: public void + ชื่อขึ้นต้น set + รับ parameter"
-  },
-  {
-    topic: "🌐 API Client-Server",
-    q: "ใน Client-Server Model, Client คือใคร?",
-    choices: [
-      "ฐานข้อมูลที่เก็บข้อมูลทั้งหมด",
-      "ส่วนที่ส่ง Request ขอข้อมูล เช่น browser, mobile app",
-      "Server ที่ประมวลผลข้อมูล",
-      "Firewall ที่คั่นกลาง"
-    ],
-    answer: 1,
-    exp: "Client = ฝั่งที่ 'ร้องขอ' ข้อมูล เช่น browser, app มือถือ | Server = ฝั่งที่ 'ให้บริการ' ข้อมูล รับ request ค้นหา DB แล้วส่ง response กลับ"
-  },
-  {
-    topic: "🌐 API Client-Server",
-    q: "HTTP Method GET ใช้ทำอะไร?",
-    choices: [
-      "สร้างข้อมูลใหม่",
-      "ลบข้อมูล",
-      "ดึงข้อมูลออกมา (อ่านอย่างเดียว ไม่แก้ไข)",
-      "แก้ไขข้อมูลทั้งหมด"
-    ],
-    answer: 2,
-    exp: "GET = อ่านข้อมูล | POST = สร้างใหม่ | PUT = แก้ไข | DELETE = ลบ — จำง่ายๆ CRUD = Create(POST) Read(GET) Update(PUT) Delete(DELETE)"
-  },
-  {
-    topic: "🌐 API Client-Server",
-    q: "Server ส่งข้อมูลกลับในรูปแบบใดเป็นหลัก?",
-    choices: [
-      "Excel (.xlsx)",
-      "Word document (.docx)",
-      "JSON (JavaScript Object Notation)",
-      "PowerPoint (.pptx)"
-    ],
-    answer: 2,
-    exp: "JSON เป็น format มาตรฐานสำหรับ API เพราะเบา อ่านง่าย ทุก programming language parse ได้ ตัวอย่าง: {\"id\":1, \"name\":\"สมชาย\", \"age\":25}"
-  },
-  {
-    topic: "🏗️ OOP + API",
-    q: "ใน Architecture แบบ OOP + API, Model Class ทำหน้าที่อะไร?",
-    choices: [
-      "ส่ง HTTP Request ไปยัง Server",
-      "แสดงผลบน UI ให้ผู้ใช้เห็น",
-      "แทนโครงสร้างข้อมูลจาก API เช่น class User มี id, name",
-      "จัดการ database โดยตรง"
-    ],
-    answer: 2,
-    exp: "Model = กล่องข้อมูล — แทน structure ของ JSON ที่ได้จาก API เช่น class User { private int id; private String name; + getter/setter } เพื่อ map ข้อมูลอย่างมีโครงสร้าง"
-  },
-  {
-    topic: "🏗️ OOP + API",
-    q: "Service Class (API Layer) มีบทบาทอะไรในระบบ OOP + API?",
-    choices: [
-      "เก็บข้อมูล User Interface",
-      "จัดการ HTTP request/response และ parse JSON เป็น Object",
-      "สืบทอด method จาก Controller",
-      "แสดงผลข้อมูลใน console"
-    ],
-    answer: 1,
-    exp: "Service Class = ชั้นกลาง — จัดการ network logic ทั้งหมด ส่ง HTTP, รับ JSON, แปลงเป็น Object ส่งให้ Controller โดย Controller ไม่ต้องรู้รายละเอียด HTTP เลย"
-  },
-  {
-    topic: "🔗 Inheritance",
-    q: "keyword ใดใช้สำหรับ Inheritance ใน Java?",
-    choices: [
-      "implements",
-      "extends",
-      "inherits",
-      "override"
-    ],
-    answer: 1,
-    exp: "Java ใช้ 'extends' สำหรับ inheritance เช่น class Dog extends Animal | 'implements' ใช้กับ interface | '@Override' ใช้กับ Polymorphism"
-  },
-  {
-    topic: "🎯 รวมทุกเรื่อง",
-    q: "ข้อใดสรุปความสัมพันธ์ระหว่าง OOP 4 เสาหลักได้ถูกต้องที่สุด?",
-    choices: [
-      "ทั้ง 4 เป็นอิสระจากกัน ไม่มีความสัมพันธ์",
-      "Encapsulation ซ่อนข้อมูล → Inheritance แชร์ระหว่าง class → Polymorphism ทำงานหลายรูปแบบ → Getter/Setter เป็นประตูเข้า-ออก",
-      "Polymorphism ต้องใช้ก่อน Encapsulation เสมอ",
-      "Inheritance และ Encapsulation คือสิ่งเดียวกัน"
-    ],
-    answer: 1,
-    exp: "ครบ! Encapsulation = ซ่อนด้วย private | Getter/Setter = เปิดประตูอย่างปลอดภัย | Inheritance = ถ่ายทอดระหว่าง class | Polymorphism = method เดียวทำงานหลายแบบ — ทั้ง 4 ทำงานร่วมกัน"
-  }
+  // --- Inheritance ---
+  { topic:"🔗 Inheritance", q:"Inheritance (การสืบทอด) คืออะไร?",
+    choices:["การซ่อนข้อมูลภายใน class","Class ลูกรับ attribute+method ของ class แม่มาใช้ได้","method เดียวกันทำงานต่างกันในแต่ละ class","การกำหนดค่าผ่าน Getter/Setter"],
+    answer:1, exp:"Inheritance = รับมรดก — class ลูก extends class แม่ ได้รับทุกอย่างโดยไม่ต้องเขียนใหม่ เช่น Dog extends Animal"},
+  { topic:"🔗 Inheritance", q:"Keyword ที่ใช้ใน Java สำหรับ Inheritance คืออะไร?",
+    choices:["implements","extends","inherits","super"],
+    answer:1, exp:"Java ใช้ 'extends' — class Dog extends Animal | 'implements' = interface | 'super' = เรียก method/constructor ของ class แม่"},
+  { topic:"🔗 Inheritance", q:"super() ในตัว constructor ของ class ลูกใช้ทำอะไร?",
+    choices:["สร้าง object ใหม่","เรียก constructor ของ class แม่","ลบ attribute ของ class แม่","เรียก method จาก class อื่น"],
+    answer:1, exp:"super() เรียก constructor ของ class แม่ ต้องวางไว้บรรทัดแรกของ constructor ลูก เช่น super(name, age); เพื่อ init ค่าของแม่"},
+  { topic:"🔗 Inheritance", q:"Class ที่ถูก extends เรียกว่าอะไร?",
+    choices:["Child Class / Subclass","Parent Class / Superclass","Abstract Class","Interface"],
+    answer:1, exp:"Parent Class / Superclass = ต้นแบบที่ถูก extends | Child Class / Subclass = ลูกที่ extends ออกมา — ลูก 'is-a' แม่เสมอ เช่น Dog is-a Animal"},
+  { topic:"🔗 Inheritance", q:"ถ้า class ลูกไม่ Override method ของแม่ จะเกิดอะไรขึ้นเมื่อเรียก method นั้น?",
+    choices:["เกิด error","จะเรียก method ของ class แม่โดยอัตโนมัติ","จะสร้าง method ใหม่เอง","ไม่สามารถเรียกได้เลย"],
+    answer:1, exp:"ถ้าไม่ Override = ใช้ method ของแม่ตามเดิม — Inheritance สืบทอดมาทั้งหมด ลูกใช้ method แม่ได้ทันทีโดยไม่ต้องทำอะไรเพิ่ม"},
+  { topic:"🔗 Inheritance", q:"หลัก 'is-a' ใน Inheritance หมายความว่าอะไร?",
+    choices:["Object ทุกชิ้นมี method","Dog is-a Animal หมายถึง Dog สืบทอดจาก Animal","Getter ต้องมีใน class ทุก class","method ต้องเป็น public เสมอ"],
+    answer:1, exp:"is-a = ความสัมพันธ์แบบ Inheritance: Dog is-a Animal ✓ | Car is-a Vehicle ✓ | ถ้าพูดได้ว่า 'X is-a Y' = ควรใช้ Inheritance"},
+
+  // --- Encapsulation ---
+  { topic:"🔒 Encapsulation", q:"Encapsulation ต่างจาก Inheritance อย่างไร?",
+    choices:["Encapsulation = รับ method จากคนอื่น, Inheritance = ซ่อนข้อมูล","Encapsulation = ซ่อนข้อมูลใน class เดียว, Inheritance = แชร์ระหว่าง class","ทั้งสองเหมือนกัน","Encapsulation ใช้กับ interface เท่านั้น"],
+    answer:1, exp:"Encapsulation = ซ่อนด้วย private ในขอบเขต class เดียว | Inheritance = ถ่ายทอดระหว่าง class หลายชั้น — คนละมิติกัน"},
+  { topic:"🔒 Encapsulation", q:"ทำไมถึงต้องประกาศ attribute เป็น private?",
+    choices:["ให้ class อื่น extends ได้","ป้องกันการแก้ไขข้อมูลโดยตรงจากภายนอก","ให้ method ทำงานเร็วขึ้น","Java บังคับให้ใช้ private เสมอ"],
+    answer:1, exp:"private = ข้อมูลเข้าถึงได้เฉพาะในตัว class เท่านั้น ป้องกัน bug จากการแก้ค่าผิดพลาดโดยตรง — นี่คือหัวใจของ Encapsulation"},
+  { topic:"🔒 Encapsulation", q:"Access modifier ใดที่ทำให้ attribute ปลอดภัยที่สุด?",
+    choices:["public","protected","private","default (ไม่ระบุ)"],
+    answer:2, exp:"private > default > protected > public (จำกัดสูงสุด → เปิดกว้างสุด) | private เข้าถึงได้แค่ใน class นั้น เท่านั้น"},
+  { topic:"🔒 Encapsulation", q:"ข้อใดคือประโยชน์หลักของ Encapsulation?",
+    choices:["ลดการเขียนโค้ด","ซ่อน implementation detail ป้องกันการแก้ค่าผิดพลาด","ทำให้ extends ได้ง่ายขึ้น","เพิ่มความเร็วในการทำงาน"],
+    answer:1, exp:"ประโยชน์: 1) ซ่อน implementation 2) ตรวจสอบค่าก่อน set ได้ 3) แก้ code ภายในได้โดยไม่กระทบภายนอก 4) ป้องกันข้อมูลเสียหาย"},
+
+  // --- Polymorphism ---
+  { topic:"🔀 Polymorphism", q:"Polymorphism คืออะไร?",
+    choices:["Class ที่มี attribute มากกว่า 5 ตัว","method ชื่อเดียวกันใน class ต่างกันทำงานต่างกันได้","การสร้าง object ใหม่จาก class","การส่ง parameter ให้ constructor"],
+    answer:1, exp:"Polymorphism = หลายรูปแบบ — sound() ใน Dog = 'โฮ่ง', ใน Cat = 'เมี้ยว', ใน Duck = 'แก้ก' method ชื่อเดิม แต่ทำงานต่างกัน"},
+  { topic:"🔀 Polymorphism", q:"Method Overriding คืออะไร?",
+    choices:["สร้าง method ชื่อเดียวกันใน class ลูก เพื่อเขียนทับ method ของ class แม่","เพิ่ม parameter ให้ method","ลบ method ออกจาก class แม่","เรียก method ของ class อื่น"],
+    answer:0, exp:"Override = ลูกเขียน method ชื่อเดิมใหม่ทั้งหมด ใส่ @Override annotation เพื่อบอก Java ว่ากำลัง override — เมื่อเรียกจะได้ version ของลูก"},
+  { topic:"🔀 Polymorphism", q:"@Override annotation ช่วยอะไร?",
+    choices:["บอกว่า method นี้เป็น abstract","บอก Java ว่ากำลัง override method ของแม่ และตรวจสอบความถูกต้อง","เพิ่ม access level ให้ method","บังคับให้ return ค่าเสมอ"],
+    answer:1, exp:"@Override: 1) เอกสารชัดว่ากำลัง override 2) Java จะ error ถ้าชื่อ method พิมพ์ผิด 3) ช่วยให้ IDE แสดง warning ได้ถูกต้อง"},
+  { topic:"🔀 Polymorphism", q:"ความแตกต่างระหว่าง Overriding กับ Overloading คืออะไร?",
+    choices:["เหมือนกันทุกอย่าง","Overriding = ลูกทับ method แม่ (ต่าง class), Overloading = ชื่อเดิม parameter ต่าง (class เดียว)","Overloading ใช้ @Override เสมอ","Overriding ใช้ได้เฉพาะกับ static method"],
+    answer:1, exp:"Override = ใน class ต่างกัน (ลูกทับแม่) | Overload = ใน class เดียวกัน ชื่อเหมือน แต่ parameter ต่าง เช่น add(int,int) กับ add(double,double)"},
+  { topic:"🔀 Polymorphism", q:"ถ้า Animal a = new Dog(); แล้วเรียก a.sound() จะได้เสียงของใคร?",
+    choices:["เสียงของ Animal (class แม่)","เสียงของ Dog (class ลูก)","เกิด error","ไม่มีเสียงออกมา"],
+    answer:1, exp:"Dynamic Dispatch / Runtime Polymorphism — Java ดูที่ 'ชนิดจริง' ของ object ณ เวลา run ไม่ใช่ชนิดที่ประกาศ ดังนั้น Dog.sound() จะถูกเรียก"},
+
+  // --- Getter & Setter ---
+  { topic:"🔑 Getter & Setter", q:"Getter มีหน้าที่อะไร?",
+    choices:["ตั้งค่า (write) ให้ private attribute","ดึงค่า (read) จาก private attribute","ลบ attribute ออกจาก object","สร้าง object ใหม่"],
+    answer:1, exp:"Getter = 'ประตูออก' — public String getName() { return name; } ให้ภายนอกอ่านค่า private ได้โดยไม่แก้ค่าโดยตรง"},
+  { topic:"🔑 Getter & Setter", q:"ทำไม Setter ถึงดีกว่าการ set ค่า attribute โดยตรง?",
+    choices:["Setter ทำงานเร็วกว่า","Setter ตั้งค่าได้โดยไม่มีเงื่อนไข","Setter ใส่ logic ตรวจสอบค่าก่อน set ได้ เช่น ห้ามอายุติดลบ","Setter ใช้กับ public attribute เท่านั้น"],
+    answer:2, exp:"Setter = 'ประตูเข้า + ยาม' — setAge(int a) { if(a>0) this.age=a; } ป้องกันค่าผิดปกติ ไม่มีทางตั้งอายุ -5 ได้"},
+  { topic:"🔑 Getter & Setter", q:"ข้อใดคือ Getter ที่เขียนถูกต้อง?",
+    choices:["public void setName(String n) { this.name = n; }","public String getName() { return name; }","private String name = getName();","public getName() { name = 'test'; }"],
+    answer:1, exp:"Getter: public + return type ตรงกับ attribute + ขึ้นต้น 'get' + คืนค่า return | Setter: public void + ขึ้นต้น 'set' + รับ parameter + this.x = x"},
+  { topic:"🔑 Getter & Setter", q:"ถ้าต้องการให้อ่านค่าได้อย่างเดียว แต่ห้ามแก้ค่า ทำอย่างไร?",
+    choices:["สร้าง Setter แต่ไม่ให้ return","สร้าง Getter แต่ไม่สร้าง Setter","ประกาศ attribute เป็น public","ใช้ static keyword"],
+    answer:1, exp:"Read-only = มีแค่ Getter ไม่มี Setter — ภายนอก class อ่านค่าได้แต่แก้ไม่ได้ เป็นเทคนิคทำ immutable attribute ใน Encapsulation"},
+  { topic:"🔑 Getter & Setter", q:"this.name ใน Setter หมายถึงอะไร?",
+    choices:["ตัวแปรท้องถิ่น (parameter) ที่รับเข้ามา","attribute ของ object ตัวเอง","ชื่อ class","method ที่กำลังทำงานอยู่"],
+    answer:1, exp:"'this' = ตัว object ปัจจุบัน | this.name = attribute ของ object | name (ไม่มี this) = parameter ที่รับมา | setName(String name){ this.name = name; }"},
+
+  // --- API Client-Server ---
+  { topic:"🌐 API Client-Server", q:"ใน Client-Server Model, Client คืออะไร?",
+    choices:["ฐานข้อมูล","ส่วนที่ส่ง Request ขอข้อมูล เช่น browser, app","Server ที่ประมวลผล","Firewall"],
+    answer:1, exp:"Client = ฝั่ง 'ร้องขอ' | Server = ฝั่ง 'ให้บริการ' — Client ส่ง Request → Server ประมวลผล → Server ส่ง Response กลับ"},
+  { topic:"🌐 API Client-Server", q:"HTTP Method ใดใช้สร้างข้อมูลใหม่?",
+    choices:["GET","POST","PUT","DELETE"],
+    answer:1, exp:"CRUD: Create=POST | Read=GET | Update=PUT | Delete=DELETE — จำง่าย POST = โพสต์สิ่งใหม่, GET = ดึงข้อมูล"},
+  { topic:"🌐 API Client-Server", q:"HTTP Status Code 200 หมายความว่าอะไร?",
+    choices:["Not Found","Internal Server Error","OK — สำเร็จ","Unauthorized"],
+    answer:2, exp:"200 OK = สำเร็จ | 404 Not Found = ไม่พบ | 500 Server Error = Server มีปัญหา | 401 Unauthorized = ไม่มีสิทธิ์ — จำ 2xx = ดี, 4xx = client ผิด, 5xx = server ผิด"},
+  { topic:"🌐 API Client-Server", q:"Server ส่งข้อมูลกลับในรูปแบบใดเป็นหลักใน REST API?",
+    choices:["Excel (.xlsx)","Word (.docx)","JSON","PowerPoint (.pptx)"],
+    answer:2, exp:"JSON = มาตรฐาน API เพราะเบา อ่านง่าย ทุกภาษา parse ได้ ตัวอย่าง: {\"id\":1,\"name\":\"สมชาย\",\"age\":25}"},
+  { topic:"🌐 API Client-Server", q:"Endpoint ใน API คืออะไร?",
+    choices:["ชื่อ database","URL ที่ระบุ resource เช่น /api/users หรือ /api/products","password สำหรับเข้า server","ชนิดของ data ที่ส่งกลับ"],
+    answer:1, exp:"Endpoint = URL ที่ใช้เข้าถึง resource เช่น GET /api/users = ดึง user ทั้งหมด | GET /api/users/1 = ดึง user id=1 | POST /api/users = สร้าง user ใหม่"},
+  { topic:"🌐 API Client-Server", q:"ขั้นตอนใดเกิดขึ้นแรกสุดใน API Call?",
+    choices:["Server ส่ง Response","Client แสดงผล JSON","Client ส่ง HTTP Request ไปยัง Server","Server query ใน Database"],
+    answer:2, exp:"ลำดับ: 1) Client ส่ง Request → 2) Server รับและ validate → 3) Server query DB → 4) Server ส่ง Response → 5) Client parse JSON → 6) Client แสดงผล"},
+
+  // --- OOP + API ---
+  { topic:"🏗️ OOP+API", q:"Model Class ในระบบ OOP + API ทำหน้าที่อะไร?",
+    choices:["ส่ง HTTP Request","แสดงผล UI","แทนโครงสร้างข้อมูลจาก API เช่น class User { id, name }","จัดการ database"],
+    answer:2, exp:"Model = กล่องข้อมูล map กับ JSON — class User { private int id; private String name; + getter/setter } รับ JSON แล้วแปลงเป็น Object ใช้งานได้"},
+  { topic:"🏗️ OOP+API", q:"Service Class ในระบบ OOP + API ทำหน้าที่อะไร?",
+    choices:["เก็บ UI data","จัดการ HTTP request/response + parse JSON","สืบทอดจาก Controller","แสดงผลใน console"],
+    answer:1, exp:"Service = ชั้นกลาง — ส่ง HTTP, รับ JSON, แปลงเป็น Object ส่งให้ Controller | Controller ไม่รู้เรื่อง network เลย แค่รับ Object มาใช้"},
+  { topic:"🏗️ OOP+API", q:"การแบ่ง 3 Layer (Controller, Service, Model) มีประโยชน์อย่างไร?",
+    choices:["ทำให้โค้ดยาวขึ้น","แต่ละส่วนทำหน้าที่ชัด แก้ไขง่าย ไม่กระทบกัน","บังคับให้ใช้ Java เท่านั้น","ลดความเร็วในการทำงาน"],
+    answer:1, exp:"Separation of Concerns: แก้ network logic ใน Service โดยไม่กระทบ Controller | เพิ่ม Model ใหม่โดยไม่แตะ Service | Test ได้ทีละ layer"},
+  { topic:"🏗️ OOP+API", q:"ข้อใดแสดงให้เห็น OOP + API ครบทุก Layer?",
+    choices:["class User { name; }","App.main() → UserService.fetchUsers() → User[] → display()","HttpURLConnection conn = new URL().openConnection();","JSON.parse(response)"],
+    answer:1, exp:"Controller (App.main) → Service (fetchUsers=HTTP) → Model (User[]) → Controller แสดงผล — ครบ 3 Layer ทำงานร่วมกันอย่างมีโครงสร้าง"},
+
+  // --- Mixed ---
+  { topic:"🎯 รวมทุกเรื่อง", q:"OOP 4 เสาหลักคืออะไร?",
+    choices:["Class, Object, Method, Variable","Encapsulation, Inheritance, Polymorphism, Abstraction","Getter, Setter, Constructor, Destructor","API, JSON, HTTP, URL"],
+    answer:1, exp:"4 เสาหลัก OOP: Encapsulation (ซ่อน), Inheritance (สืบทอด), Polymorphism (หลายรูป), Abstraction (ซ่อน complexity) — ทั้ง 4 ทำงานร่วมกัน"},
+  { topic:"🎯 รวมทุกเรื่อง", q:"ข้อใดสรุปภาพรวม OOP + API ได้ถูกต้องที่สุด?",
+    choices:["ทั้ง 4 เป็นอิสระจากกัน","Encapsulation ซ่อนข้อมูล → Inheritance แชร์ระหว่าง class → Polymorphism หลายรูปแบบ → Getter/Setter เป็นประตู","Polymorphism ต้องใช้ก่อน Encapsulation","Inheritance กับ Encapsulation คือสิ่งเดียวกัน"],
+    answer:1, exp:"สรุป: private+Getter/Setter = Encapsulation | extends+super = Inheritance | @Override = Polymorphism | Model+Service+Controller = OOP สำหรับ API"}
 ];
 
-let current = 0;
-let score = 0;
-let answered = false;
+// ===== FLASHCARDS =====
+const flashcards = [
+  { topic:"🔗 Inheritance", term:"Inheritance คืออะไร?", def:"class ลูก (Child) สืบทอด attribute + method ของ class แม่ (Parent) โดยใช้ extends\nเช่น: class Dog extends Animal { }\nลูกได้รับมรดกทุกอย่างจากแม่" },
+  { topic:"🔗 Inheritance", term:"super() คืออะไร?", def:"เรียก constructor ของ class แม่\nวางไว้บรรทัดแรกของ constructor ลูกเสมอ\nเช่น: super(name, age);" },
+  { topic:"🔗 Inheritance", term:"is-a relationship", def:"Dog is-a Animal ✓\nCar is-a Vehicle ✓\nถ้าพูดได้ว่า X is-a Y → ใช้ Inheritance ได้" },
+  { topic:"🔒 Encapsulation", term:"Encapsulation คืออะไร?", def:"การห่อหุ้มข้อมูลด้วย private\nป้องกันการแก้ค่าโดยตรงจากภายนอก\nเปิดผ่าน Getter/Setter เท่านั้น" },
+  { topic:"🔒 Encapsulation", term:"Access Modifiers (จำกัดสูง→ต่ำ)", def:"private → default → protected → public\nprivate = แค่ใน class นั้น\npublic = เรียกได้จากทุกที่" },
+  { topic:"🔀 Polymorphism", term:"Polymorphism คืออะไร?", def:"method ชื่อเดียวกัน ทำงานต่างกันใน class ต่างกัน\nDog.sound() = 'โฮ่ง'\nCat.sound() = 'เมี้ยว'" },
+  { topic:"🔀 Polymorphism", term:"Override vs Overload", def:"Override = ลูกเขียนทับ method แม่ (@Override)\nOverload = ชื่อเดิม parameter ต่างใน class เดียว\nOverride = ต่าง class | Overload = class เดียวกัน" },
+  { topic:"🔀 Polymorphism", term:"Dynamic Dispatch", def:"Animal a = new Dog();\na.sound(); // ได้เสียง Dog!\nJava ดูชนิดจริงตอน run ไม่ใช่ตอนประกาศ" },
+  { topic:"🔑 Getter & Setter", term:"Getter คืออะไร?", def:"ดึงค่า (read) จาก private attribute\npublic String getName() {\n  return name;\n}" },
+  { topic:"🔑 Getter & Setter", term:"Setter คืออะไร?", def:"ตั้งค่า (write) ให้ private attribute + validation\npublic void setAge(int a) {\n  if(a > 0) this.age = a;\n}" },
+  { topic:"🔑 Getter & Setter", term:"this keyword", def:"อ้างถึง object ปัจจุบัน\nthis.name = attribute ของ object\nname (ไม่มี this) = parameter ที่รับมา" },
+  { topic:"🌐 API", term:"HTTP Methods (CRUD)", def:"GET = Read (ดึงข้อมูล)\nPOST = Create (สร้างใหม่)\nPUT = Update (แก้ไข)\nDELETE = Delete (ลบ)" },
+  { topic:"🌐 API", term:"HTTP Status Codes", def:"2xx = สำเร็จ (200 OK)\n4xx = Client ผิด (404 Not Found)\n5xx = Server ผิด (500 Server Error)" },
+  { topic:"🌐 API", term:"JSON คืออะไร?", def:"JavaScript Object Notation\nรูปแบบมาตรฐาน API\n{\"id\":1, \"name\":\"สมชาย\", \"age\":25}" },
+  { topic:"🏗️ OOP+API", term:"3 Layer Architecture", def:"Controller = รับ input / แสดงผล\nService = จัดการ HTTP + parse JSON\nModel = โครงสร้างข้อมูล (class User)" },
+  { topic:"🏗️ OOP+API", term:"Separation of Concerns", def:"แต่ละ Layer ทำหน้าที่ชัดเจน\nแก้ network logic ใน Service → ไม่กระทบ Controller\nเพิ่ม Model ใหม่ → ไม่แตะ Service" }
+];
+
+// ===== QUIZ LOGIC =====
+let current = 0, score = 0, answered = false;
+let wrongQuestions = [];
+const shuffled = shuffle([...questions]);
 
 function shuffle(arr) {
   for(let i=arr.length-1;i>0;i--){
@@ -1484,8 +1509,6 @@ function shuffle(arr) {
   }
   return arr;
 }
-
-const shuffled = shuffle([...questions]);
 
 function loadQuestion() {
   if(current >= shuffled.length) { showResult(); return; }
@@ -1518,19 +1541,14 @@ function selectAnswer(idx) {
     if(i === q.answer) b.classList.add('correct');
     else if(i === idx && idx !== q.answer) b.classList.add('wrong');
   });
-  if(idx === q.answer) {
-    score++;
-    document.getElementById('quiz-score').textContent = score;
-  }
+  if(idx === q.answer) { score++; document.getElementById('quiz-score').textContent = score; }
+  else { wrongQuestions.push({ q: q.q, correct: q.choices[q.answer], exp: q.exp }); }
   document.getElementById('quiz-exp-text').textContent = q.exp;
   document.getElementById('quiz-explanation').style.display = 'block';
   document.getElementById('quiz-next').style.display = 'block';
 }
 
-function nextQuestion() {
-  current++;
-  loadQuestion();
-}
+function nextQuestion() { current++; loadQuestion(); }
 
 function showResult() {
   document.getElementById('quiz-card').style.display = 'none';
@@ -1538,21 +1556,72 @@ function showResult() {
   document.getElementById('quiz-result').style.display = 'block';
   const pct = Math.round(score/shuffled.length*100);
   document.getElementById('result-score').textContent = `${score} / ${shuffled.length}`;
-  let msg = pct >= 80 ? '🔥 เยี่ยมมาก! พร้อมสอบแล้ว!' : pct >= 60 ? '👍 ดีแล้ว! ทบทวนส่วนที่พลาดอีกรอบ' : '📚 ลองทำใหม่อีกครั้ง จะทำได้ดีขึ้น!';
-  document.getElementById('result-msg').textContent = msg;
+  let emoji = pct>=90?'🔥':pct>=70?'👍':pct>=50?'📚':'💪';
+  let msg = pct>=90?'เยี่ยมมาก! พร้อมสอบ 100%!':pct>=70?'ดีมาก! ทบทวนข้อที่พลาดอีกรอบ':pct>=50?'พอใช้ได้ ลองทำใหม่อีกครั้ง':'ทบทวน Flashcard ก่อนแล้วค่อยทำใหม่';
+  document.getElementById('result-msg').textContent = emoji + ' ' + msg;
+  const wl = document.getElementById('wrong-list');
+  if(wrongQuestions.length > 0) {
+    wl.innerHTML = '<div style="font-size:13px;font-weight:800;color:#ff8a8a;margin-bottom:10px;">❌ ข้อที่พลาด — ทบทวนด่วน!</div>';
+    wrongQuestions.forEach(w => {
+      wl.innerHTML += `<div class="wrong-item"><strong>${w.q}</strong>✅ ${w.correct}<br><span style="font-size:11.5px;color:rgba(255,255,255,0.5);">${w.exp}</span></div>`;
+    });
+  }
 }
 
 function restartQuiz() {
-  current = 0; score = 0;
+  current = 0; score = 0; wrongQuestions = [];
   shuffle(shuffled);
   document.getElementById('quiz-score').textContent = '0';
   document.getElementById('quiz-card').style.display = 'block';
   document.getElementById('quiz-result').style.display = 'none';
+  document.getElementById('wrong-list').innerHTML = '';
   loadQuestion();
+}
+
+// ===== FLASHCARD LOGIC =====
+let flashIdx = 0, flashFlipped = false, knownCount = 0;
+const knownSet = new Set();
+const flashShuffled = shuffle([...flashcards]);
+
+function loadFlash() {
+  const f = flashShuffled[flashIdx];
+  flashFlipped = false;
+  document.getElementById('flash-inner').style.transform = 'rotateY(0deg)';
+  document.getElementById('flash-topic-f').textContent = f.topic;
+  document.getElementById('flash-topic-b').textContent = f.topic;
+  document.getElementById('flash-term').textContent = f.term;
+  document.getElementById('flash-def').textContent = f.def;
+  document.getElementById('flash-progress').textContent = `การ์ด ${flashIdx+1} / ${flashShuffled.length}  |  จำได้แล้ว: ${knownSet.size}/${flashShuffled.length}`;
+  document.getElementById('flash-known').textContent = knownSet.has(flashIdx) ? '✅ การ์ดนี้จำได้แล้ว' : '';
+}
+
+function flipCard() {
+  flashFlipped = !flashFlipped;
+  document.getElementById('flash-inner').style.transform = flashFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)';
+}
+
+function nextFlash() { flashIdx = (flashIdx+1) % flashShuffled.length; loadFlash(); }
+function prevFlash() { flashIdx = (flashIdx-1+flashShuffled.length) % flashShuffled.length; loadFlash(); }
+
+function markFlash(known) {
+  if(known) knownSet.add(flashIdx); else knownSet.delete(flashIdx);
+  nextFlash();
+}
+
+function switchMode(mode) {
+  document.getElementById('mode-quiz').style.display = mode==='quiz' ? 'block' : 'none';
+  document.getElementById('mode-flash').style.display = mode==='flash' ? 'block' : 'none';
+  document.getElementById('tab-quiz').className = 'mode-tab ' + (mode==='quiz'?'mode-active':'');
+  document.getElementById('tab-flash').className = 'mode-tab ' + (mode==='flash'?'mode-active':'');
+  if(mode==='flash') loadFlash();
 }
 
 loadQuestion();
 </script>
+
+    <!-- OLD REMOVED -->
+
+    <!-- CLEANED -->
 
     <!-- Footer -->
     <div class="footer">
@@ -1562,8 +1631,9 @@ loadQuestion();
         <span class="tip-chip">🔀 Polymorphism = หลายรูปแบบ</span>
         <span class="tip-chip">🔑 Getter/Setter = ประตูข้อมูล</span>
         <span class="tip-chip">🌐 API = Client ↔ Server</span>
+        <span class="tip-chip">🏗️ 3 Layers = Controller+Service+Model</span>
       </div>
-      <div class="footer-luck">✨ โชคดีในการสอบ! OOP 2/68 (19)</div>
+      <div class="footer-luck">✨ โชคดีในการสอบ! OOP 2/68 (19) 🔥</div>
     </div>
 
   </div><!-- /content -->
